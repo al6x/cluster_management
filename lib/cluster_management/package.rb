@@ -1,19 +1,19 @@
 module Ros
-  class Dsl
-    attr_reader :package
-    
-    def initialize package
-      @package = package
+  class Package < Hash
+    class Dsl
+      attr_reader :package
+
+      def initialize package
+        @package = package
+      end
+
+      def version version; package.version = version end    
+      def applied? &b; package.applied = b end
+      def apply &b; package.apply = b end    
+      def verify &b; package.verify = b end
+      def after_applying &b; package.after_applying = b end    
     end
     
-    def version version; package.version = version end    
-    def applied? &b; package.applied = b end
-    def apply &b; package.apply = b end    
-    def verify &b; package.verify = b end
-    def after_applying &b; package.after_applying = b end    
-  end
-  
-  class Package < Hash
     attr_accessor :applied, :apply, :verify, :after_applying, :name, :version
     
     def initialize name
@@ -36,12 +36,4 @@ module Ros
       # print "done\n" if apply and !package_applied              
     end
   end  
-end
-
-#
-# you must override this method to provide your own implementation
-#
-def boxes
-  warn 'you must override :boxes method to provide your own behaviour'
-  []
 end
