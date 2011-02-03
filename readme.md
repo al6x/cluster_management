@@ -7,23 +7,19 @@ It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef,
 
 Define your packages, they are just rake tasks, so you probably know how to work with them:
 
-    namespace :basic do
-      package :ruby do
-        applied?{box.has_mark? :ruby}
-        apply do
-          box.bash 'apt-get install ruby'          
-        end
-        after_applying{box.mark :ruby}
+    package :ruby do
+      applied?{box.has_mark? :ruby}
+      apply do
+        box.bash 'apt-get install ruby'          
       end
+      after_applying{box.mark :ruby}
     end
       
 or you can use a little shorter notation (it's equivalent to the previous):
 
-    namespace :app_server, 3 do
-      package rails: :ruby do
-        apply_once do
-          box.bash 'gem install rails'
-        end
+    package rails: :ruby, version: 3 do
+      apply_once do
+        box.bash 'gem install rails'
       end
     end
     
