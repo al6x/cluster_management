@@ -98,13 +98,10 @@ tasks. And by the way, the *box.mark ...* is just an example check, you can use 
 It checks if the package already has been applied to box, so you can evolve your configuration and apply 
 it multiple times, it will apply only missing packages (or drop the *applied?* clause and it will be applied every run).
 
-# Old stuff, don't bother to reed it
+# Temporarry stuff, don't bother to read it
 
 - small
 - uses well known tools (rake and anytingh ssh-enabled)
 - support iterative development
-
-
-
 
 [my_cluster]: https://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
