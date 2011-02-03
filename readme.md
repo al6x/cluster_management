@@ -67,7 +67,7 @@ and packager will do all the job of installing and configuring your cluster boxe
     applying 'app_server:fake_gem:2' to '<Box: universal.xxx.com>'
     applying 'app_server:custom_ruby:3' to '<Box: universal.xxx.com>'
     
-you can also use standard Rake -T command to see package docs (it's also from my config, details are here [my_cluster][my_cluster]):
+You can also use standard Rake -T command to see docs (it's also from my config, details are here [my_cluster][my_cluster]):
 
     $ rake -T
     rake app_server               # app server
