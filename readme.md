@@ -49,7 +49,7 @@ to what machines it should be applied:
     
 Now, you can press the enter:
 
-    $ rake os:rails host=webapp.com
+    $ rake os:rails host=myapp.com
     
 and packager will do all the job of installing and configuring your cluster boxes, and prints you something like that 
 (it's a sample output of some of my own box, you can see config details here [my_cluster][my_cluster]):
