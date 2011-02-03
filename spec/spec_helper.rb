@@ -41,7 +41,12 @@ module ClusterManagement
   class << self
     attr_accessor :last_task
   
-    def task name, &block
+    def rake_task name_or_options, &block
+      name = if name_or_options.is_a? Hash
+        name_or_options.first.first
+      else
+        name_or_options
+      end
       task = Task.new name      
       block.call task if block
       self.last_task = task

@@ -32,21 +32,8 @@ module ClusterManagement
     # 
     # Rake integration
     # 
-    def task *args, &block
+    def rake_task *args, &block
       task *args, &block
-    end
-    
-    
-    # 
-    # Logger
-    # 
-    attr_writer :logger
-    def logger
-      unless @logger
-        @logger = Logger.new STDOUT
-        @logger.formatter = -> severity, datetime, progname, msg {msg}
-      end
-      @logger      
-    end
+    end        
   end  
 end

@@ -1,10 +1,10 @@
 module ClusterManagement
   class Package < Hash
     class Dsl
-      attr_reader :package
+      attr_reader :package, :box
 
-      def initialize package
-        @package = package
+      def initialize package, box
+        @package, @box = package, box
       end
 
       def version; package.version end    
@@ -16,9 +16,9 @@ module ClusterManagement
       
       def apply_once &b      
         mark = package.version ? "#{package.name}:#{package.version}" : package.name.to_s
-        applied?{|box| ClusterManagement.integration[:has_mark?].call box, mark}
+        applied?{ClusterManagement.integration[:has_mark?].call box, mark}
         apply &b
-        after_applying{|box| ClusterManagement.integration[:mark].call box, mark}
+        after_applying{ClusterManagement.integration[:mark].call box, mark}
       end
     end
     
@@ -28,15 +28,13 @@ module ClusterManagement
       @name, @version = name, version
     end
     
-    def configure_with &b
-      dsl = Dsl.new self
-      b.call dsl
-    end
-    
-    def apply_to box
+    def configure box, &b
+      dsl = Dsl.new self, box
+      dsl.instance_eval &b
+
       if applied
         package_applied = applied.call box
-        ensure_boolean! package_applied, :applied?
+        # ensure_boolean! package_applied, :applied?
       else
         package_applied = false
       end
@@ -48,7 +46,7 @@ module ClusterManagement
       
       if verify
         verified = verify.call box
-        ensure_boolean! verified, 'verify'
+        # ensure_boolean! verified, 'verify'
         raise "invalid '#{name}' package for '#{box}'!" unless verified
       end
       after_applying && after_applying.call(box)
@@ -64,13 +62,13 @@ module ClusterManagement
   end  
 end
 
-def package options, version = nil, &block
-  ClusterManagement.task options do |task, *args|
+def package name_or_options, version = nil, &block
+  version ||= name_or_options.delete :version if name_or_options.is_a? Hash
+  ClusterManagement.rake_task name_or_options do |task, *args|
     if block
       ClusterManagement.boxes.each do |box|
         package = ClusterManagement::Package.new task.name, version
-        package.configure_with &block
-        package.apply_to box
+        package.configure box, &block
       end
     end
   end  

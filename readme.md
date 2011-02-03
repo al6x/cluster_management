@@ -3,43 +3,84 @@
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
 **It's extremely easy**, there are only 3 methods.
 
+## Package management
+
 Define your packages, they are just rake tasks, so you probably know how to work with them:
 
-    namespace :os do
+    namespace :basic do
       package :ruby do
-        applied?{|box| box.has_mark? :ruby}
-        apply do |box| 
-          box.bash 'apt-get install ruby'
-          box.mark :ruby
+        applied?{box.has_mark? :ruby}
+        apply do
+          box.bash 'apt-get install ruby'          
         end
+        after_applying{box.mark :ruby}
       end
+    end
+      
+or you can use a little shorter notation (it's equivalent to the previous):
 
-      package :rails => :ruby do
-        applied?{|box| box.has_mark? :rails}
-        apply do |box| 
+    namespace :app_server, 3 do
+      package rails: :ruby do
+        apply_once do
           box.bash 'gem install rails'
-          box.mark :rails
         end
       end
     end
     
-Define to what it should be applied:
+And it's understands dependencies, so the :rails package will apply :ruby before applying itself. 
+It also support iterative development, so you don't need to write all the config at once, do it by small steps, adding one package after another. 
+And you can use versioning to update already installed packages - if you change version of some package it will be reapplied next run.
+    
+And, last step - define to what machines it should be applied:
 
-    def each_box &b
-      host = ENV['host'] || raise(":host not defined!")
-      box = Rsh::Box.new host: host, ssh: {user: 'root', password: 'secret'}
-      b.call box
+    module ClusterManagement
+      def self.boxes
+        unless @boxes    
+          host = ENV['host'] || raise(":host not defined!")
+          box = Rsh::Box.new host: host, ssh: config.ssh!.to_h
+          box.open
+
+          @boxes = [box]
+        end
+        @boxes
+      end
     end
     
-Run it:
+Now, you can press the enter:
 
     $ rake os:rails host=webapp.com
+    
+and packager will do all the job of installing and configuring your cluster boxes, and prints you something like that 
+(it's a sample output of some of my own box, you can see config details here [my_cluster][my_cluster]):
+    
+    $ rake app_server host=universal.xxx.com
+    applying 'basic:os:5' to '<Box: universal.xxx.com>'
+    applying 'basic:apt' to '<Box: universal.xxx.com>'
+    applying 'basic:system_tools' to '<Box: universal.xxx.com>'
+    applying 'basic:ruby' to '<Box: universal.xxx.com>'
+      building ... done
+      updating path ... done
+    applying 'basic:git' to '<Box: universal.xxx.com>'
+    applying 'basic:security:6' to '<Box: universal.xxx.com>'
+    applying 'basic:manual_management:2' to '<Box: universal.xxx.com>'
+    applying 'app_server:fake_gem:2' to '<Box: universal.xxx.com>'
+    applying 'app_server:custom_ruby:3' to '<Box: universal.xxx.com>'
+
+## Runtime services
+
+[add details here]
+    
+## Deployment
+
+[add more details here]
     
 **You can use it also for deployment**, exactly the same way, configure it the way you like, it's just rake 
 tasks. And by the way, the *box.mark ...* is just an example check, you can use anything there.
 
 It checks if the package already has been applied to box, so you can evolve your configuration and apply 
 it multiple times, it will apply only missing packages (or drop the *applied?* clause and it will be applied every run).
+
+# Old stuff, don't bother to reed it
 
 - small
 - uses well known tools (rake and anytingh ssh-enabled)
@@ -73,3 +114,5 @@ rake basic:security           # security
 rake basic:system_tools       # System tools, mainly for build support
 rake db                       # db
 rake db:mongodb               # MongoDB
+
+[my_cluster]: https://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'cluster_management/package'
 
 describe 'Package' do
-  before :each do 
+  before :each do
     ClusterManagement.box = :box
   end
   
@@ -17,23 +17,23 @@ describe 'Package' do
   
   it "basic" do
     check = mock()
-    check.should_receive(:applied?).ordered.with(:box).and_return(false)
-    check.should_receive(:apply).ordered.with(:box)
-    check.should_receive(:verify).ordered.with(:box).and_return(true)
-    check.should_receive(:after_applying).ordered.with(:box)
+    check.should_receive(:applied?).ordered.and_return(false)
+    check.should_receive(:apply).ordered
+    check.should_receive(:verify).ordered.and_return(true)
+    check.should_receive(:after_applying).ordered
     
-    the_package = nil
-    package :tools, 1 do |pkg|
-      the_package = pkg.package
+    the_package, the_box = nil, nil
+    package :tools, 1 do
+      package.is_a?(ClusterManagement::Package).should == true
+      version.should == 1
+      box.should == :box
       
-      pkg.version.should == 1
-      pkg.applied?{|box| check.applied?(box)}
-      pkg.apply{|box| check.apply(box)}
-      pkg.verify{|box| check.verify(box)}
-      pkg.after_applying{|box| check.after_applying(box)}
+      
+      applied?{check.applied?(box)}
+      apply{check.apply(box)}
+      verify{check.verify(box)}
+      after_applying{check.after_applying(box)}
     end
-    
-    the_package.version.should == 1
   end
   
   it "should not reapply package but always verify it" do
@@ -41,17 +41,17 @@ describe 'Package' do
     check.should_not_receive(:apply)
     check.should_receive(:verify).and_return(true)
     
-    package :tools do |pkg|
-      pkg.applied?{|box| true}
-      pkg.apply{|box| check.apply}
-      pkg.verify{|box| check.verify}
+    package :tools do
+      applied?{true}
+      apply{check.apply}
+      verify{check.verify}
     end
   end
   
   it "should verify packages" do
     -> {
-      package :tools do |pkg|
-        pkg.verify{|box| false}
+      package :tools do
+        verify{false}
       end
     }.should raise_error(/invalid.*tools/)
   end
@@ -61,10 +61,20 @@ describe 'Package' do
     ClusterManagement.stub(:boxes).and_return(boxes)
     
     check = []
-    package :to do |pkg|
-      pkg.apply{|box| check << box}
+    package :tools do
+      apply{check << box}
     end
     check.should == boxes
+  end
+  
+  it 'should support version attribute' do
+    package :tools, 2 do
+      version.should == 2
+    end
+    
+    package tools: :os, version: 2 do
+      version.should == 2
+    end
   end
   
   describe "apply_once" do
@@ -82,8 +92,8 @@ describe 'Package' do
       check = mock()
       check.should_receive(:apply_once).with(box)
     
-      package :tools do |pkg|
-        pkg.apply_once{|box| check.apply_once(box)}
+      package :tools do
+        apply_once{check.apply_once(box)}
       end
     end
     
@@ -93,8 +103,8 @@ describe 'Package' do
       check = mock()
       check.should_not_receive(:apply_once)
     
-      package :tools do |pkg|
-        pkg.apply_once{|box| check.apply_once}
+      package :tools do
+        apply_once{check.apply_once}
       end
     end
     
@@ -104,8 +114,8 @@ describe 'Package' do
       check = mock()
       check.should_receive(:apply_once)
     
-      package :tools, 2 do |pkg|
-        pkg.apply_once{|box| check.apply_once}
+      package :tools, 2 do
+        apply_once{check.apply_once}
       end
     end
   end
@@ -120,7 +130,7 @@ end
 # 
 # def apply_once &b      
 #   mark = package.version ? "#{package.name}:#{package.version}" : package.name
-#   applied?{|box| INTEGRATION[:has_mark?].call box, mark}
+#   applied?{INTEGRATION[:has_mark?].call box, mark}
 #   apply &b
-#   after_applying{|box| INTEGRATION[:mark].call box, mark}
+#   after_applying{INTEGRATION[:mark].call box, mark}
 # end
