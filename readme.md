@@ -31,7 +31,8 @@ And it's understands dependencies, so the :rails package will apply :ruby before
 It also support iterative development, so you don't need to write all the config at once, do it by small steps, adding one package after another. 
 And you can use versioning to update already installed packages - if you change version of some package it will be reapplied next run.
     
-And, last step - define to what machines it should be applied:
+And, last step - define (I intentionally leave implementation of this method to You, it's very specific to Your environment) 
+to what machines it should be applied:
 
     module ClusterManagement
       def self.boxes
@@ -65,6 +66,23 @@ and packager will do all the job of installing and configuring your cluster boxe
     applying 'basic:manual_management:2' to '<Box: universal.xxx.com>'
     applying 'app_server:fake_gem:2' to '<Box: universal.xxx.com>'
     applying 'app_server:custom_ruby:3' to '<Box: universal.xxx.com>'
+    
+you can also use standard Rake -T command to see package docs (it's also from my config, details are here [my_cluster][my_cluster]):
+
+    $ rake -T
+    rake app_server               # app server
+    rake app_server:custom_ruby   # custom ruby (with encoding globally set to unicode and enabled fake_gem hack)
+    rake app_server:fake_gem      # fake_gem
+    rake basic                    # Box with basic packages installed
+    rake basic:apt                # apt
+    rake basic:git                # git
+    rake basic:manual_management  # Makes box handy for manual management
+    rake basic:os                 # Checks OS version and add some very basic stuff
+    rake basic:ruby               # ruby
+    rake basic:security           # security
+    rake basic:system_tools       # System tools, mainly for build support
+    rake db                       # db
+    rake db:mongodb               # MongoDB
 
 ## Runtime services
 
@@ -87,32 +105,6 @@ it multiple times, it will apply only missing packages (or drop the *applied?* c
 - support iterative development
 
 
-$ rake app_server host=universal.xxx.com
-applying 'basic:os:5' to '<Box: universal.xxx.com>'
-applying 'basic:apt' to '<Box: universal.xxx.com>'
-applying 'basic:system_tools' to '<Box: universal.xxx.com>'
-applying 'basic:ruby' to '<Box: universal.xxx.com>'
-  building ... done
-  updating path ... done
-applying 'basic:git' to '<Box: universal.xxx.com>'
-applying 'basic:security:6' to '<Box: universal.xxx.com>'
-applying 'basic:manual_management:2' to '<Box: universal.xxx.com>'
-applying 'app_server:fake_gem:2' to '<Box: universal.xxx.com>'
-applying 'app_server:custom_ruby:3' to '<Box: universal.xxx.com>'
 
-$ rake -T
-rake app_server               # app server
-rake app_server:custom_ruby   # custom ruby (with encoding globally set to unicode and enabled fake_gem hack)
-rake app_server:fake_gem      # fake_gem
-rake basic                    # Box with basic packages installed
-rake basic:apt                # apt
-rake basic:git                # git
-rake basic:manual_management  # Makes box handy for manual management
-rake basic:os                 # Checks OS version and add some very basic stuff
-rake basic:ruby               # ruby
-rake basic:security           # security
-rake basic:system_tools       # System tools, mainly for build support
-rake db                       # db
-rake db:mongodb               # MongoDB
 
 [my_cluster]: https://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
