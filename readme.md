@@ -34,7 +34,7 @@ to what machines it should be applied:
       def self.boxes
         unless @boxes    
           host = ENV['host'] || raise(":host not defined!")
-          box = Rsh::Box.new host: host, ssh: config.ssh!.to_h
+          box = Vos::Box.new host: host, ssh: config.ssh!.to_h
           box.open
 
           @boxes = [box]
