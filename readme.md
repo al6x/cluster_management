@@ -1,7 +1,9 @@
 # Simple cluster management tools
 
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
-**It's extremely easy**, there are only 3 methods.
+**It's extremely easy**, there are only 3 methods. 
+You probably already familiar with Rake and have it in Your project, and because ClusterManagement is just a small Rake 
+addon it should be easy to add and get started with it.
 
 It's ssh-agnostic and has no extra dependencies. You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
 samples below done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
