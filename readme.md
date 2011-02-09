@@ -3,6 +3,9 @@
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
 **It's extremely easy**, there are only 3 methods.
 
+It's ssh-agnostic, You can use whathever tool you like (even lov-level Net::SSH / Net::SFTP), but by default it's integrated with
+the [Virtual Operating System][vos] tool.
+
 ## Package management
 
 Define your packages, they are just rake tasks, so you probably know how to work with them:
@@ -100,4 +103,5 @@ it multiple times, it will apply only missing packages (or drop the *applied?* c
 - uses well known tools (rake and anytingh ssh-enabled)
 - support iterative development
 
-[my_cluster]: https://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
+[my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
+[vos]: http://github.com/alexeypetrushin/vos
