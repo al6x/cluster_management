@@ -3,8 +3,8 @@
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
 **It's extremely easy**, there are only 3 methods.
 
-It's ssh-agnostic, You can use whathever tool you like (even lov-level Net::SSH / Net::SFTP), but by default it's integrated with
-the [Virtual Operating System][vos] tool.
+It's ssh-agnostic, You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
+by default it's integrated with [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
 
 ## Package management
 
@@ -105,3 +105,4 @@ it multiple times, it will apply only missing packages (or drop the *applied?* c
 
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
 [vos]: http://github.com/alexeypetrushin/vos
+[vfs]: http://github.com/alexeypetrushin/vfs
