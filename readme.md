@@ -115,8 +115,6 @@ You can also use standard Rake -T command to see docs (it's also from my config,
     rake basic:system_tools       # System tools, mainly for build support
     rake db                       # db
     rake db:mongodb               # MongoDB
-    
-
 
 ## Runtime Services
 
@@ -127,10 +125,7 @@ You can also use standard Rake -T command to see docs (it's also from my config,
 [add more details here]
     
 **You can use it also for deployment**, exactly the same way, configure it the way you like, it's just rake 
-tasks. And by the way, the *box.mark ...* is just an example check, you can use anything there.
-
-It checks if the package already has been applied to box, so you can evolve your configuration and apply 
-it multiple times, it will apply only missing packages (or drop the *applied?* clause and it will be applied every run).
+tasks.
 
 # Temporarry stuff, don't bother to read it
 
