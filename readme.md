@@ -36,7 +36,7 @@ Define your packages, they are just rake tasks, so you probably know how to work
       verify{box.bash('ruby -v') =~ /ruby 1.9.2/}
     end
       
-or you can use a little more explicit notation with custom :applied? logic (:apply_once is a shortcut for :applied? & :after_applying):
+Or you can use a little more explicit notation with custom :applied? logic (:apply_once is a shortcut for :applied? & :after_applying):
 
     package :ruby do
       applied?{box.has_mark? :ruby}
@@ -46,7 +46,7 @@ or you can use a little more explicit notation with custom :applied? logic (:app
       after_applying{box.mark :ruby}
     end
     
-let's define another package:
+Let's define another package:
     
     package rails: :ruby, version: 3 do
       apply_once do
@@ -54,9 +54,14 @@ let's define another package:
       end
     end
     
-And it's understands dependencies, so the :rails package will apply :ruby before applying itself. 
-It also support iterative development, so you don't need to write all the config at once, do it by small steps, adding one package after another. 
-And you can use versioning to update already installed packages - if you change version of some package it will be reapplied next run.
+It's understands dependencies, so the :rails package will apply :ruby before applying itself. 
+
+It checks if the package already has been applied to box, so you can evolve your configuration and apply it multiple times, 
+it will apply only missing packages (or drop the applied? clause and it will be applied every run). It allows you
+to use **iterative development**, you don't need to write all the config at once, do it by small steps, adding one package after another. 
+
+You can also use versioning to update already installed packages - if You change version it will be reapplied next run.
+And by the way, the box.mark ... is just an example check, you can use anything there.
     
 And, last step - define (I intentionally leave implementation of this method to You, it's very specific to Your environment) 
 to what machines it should be applied:
@@ -110,6 +115,8 @@ You can also use standard Rake -T command to see docs (it's also from my config,
     rake basic:system_tools       # System tools, mainly for build support
     rake db                       # db
     rake db:mongodb               # MongoDB
+    
+
 
 ## Runtime Services
 
