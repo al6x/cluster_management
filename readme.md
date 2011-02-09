@@ -116,7 +116,7 @@ You can also use standard Rake -T command to see docs (it's also from my config,
     rake db                       # db
     rake db:mongodb               # MongoDB
 
-## Runtime Services
+## Service Management
 
 [add details here]
     
