@@ -36,8 +36,18 @@ Define your packages, they are just rake tasks, so you probably know how to work
       verify{box.bash('ruby -v') =~ /ruby 1.9.2/}
     end
       
-or you can use a little shorter notation (it's equivalent to the previous):
+or you can use a little more explicit notation with custom :applied? logic (:apply_once is a shortcut for :applied? & :after_applying):
 
+    package :ruby do
+      applied?{box.has_mark? :ruby}
+      apply do
+        ...
+      end
+      after_applying{box.mark :ruby}
+    end
+    
+let's define another package:
+    
     package rails: :ruby, version: 3 do
       apply_once do
         box.bash 'gem install rails'
