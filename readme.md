@@ -10,12 +10,30 @@ samples below done by using [Virtual Operating System][vos] and [Virtual File Sy
 
 Define your packages, they are just rake tasks, so you probably know how to work with them:
 
-    package :ruby do
-      applied?{box.has_mark? :ruby}
-      apply do
-        box.bash 'apt-get install ruby'          
-      end
-      after_applying{box.mark :ruby}
+    desc 'ruby 1.9.2'
+    package ruby: :system_tools do        
+      apply_once do
+        installation_dir = '/usr/local/ruby'
+        ruby_name = "ruby-1.9.2-p136"
+
+        box.tmp do |tmp|
+          tmp.bash "wget ftp://ftp.ruby-lang.org//pub/ruby/1.9/#{ruby_name}.tar.gz"
+          tmp.bash "tar -xvzf #{ruby_name}.tar.gz"
+
+          src_dir = tmp[ruby_name]
+          src_dir.bash "./configure --prefix=#{installation_dir}"
+          src_dir.bash 'make && make install'
+        end
+
+        box.home('.gemrc').write! "gem: --no-ri --no-rdoc\n"
+
+        bindir = "#{installation_dir}/bin"
+        unless box.env_file.content =~ /PATH.*#{bindir}/
+          box.env_file.append %(\nexport PATH="$PATH:#{bindir}"\n)
+          box.reload_env
+        end
+      end    
+      verify{box.bash('ruby -v') =~ /ruby 1.9.2/}
     end
       
 or you can use a little shorter notation (it's equivalent to the previous):
