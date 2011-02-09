@@ -6,7 +6,7 @@ It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef,
 It's ssh-agnostic and has no extra dependencies. You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
 samples below done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
 
-## Package management
+## Package Management
 
 Define your packages, they are just rake tasks, so you probably know how to work with them:
 
@@ -111,7 +111,7 @@ You can also use standard Rake -T command to see docs (it's also from my config,
     rake db                       # db
     rake db:mongodb               # MongoDB
 
-## Runtime services
+## Runtime Services
 
 [add details here]
     
