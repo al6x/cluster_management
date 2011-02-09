@@ -7,7 +7,7 @@ You probably already familiar with Rake and have it in Your project, and because
 addon it should be easy to add and get started with it.
 
 It's ssh-agnostic and has no extra dependencies. You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
-samples below done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
+samples below are done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
 
 ## Package Management
 
