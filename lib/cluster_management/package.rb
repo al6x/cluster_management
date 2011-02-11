@@ -34,35 +34,33 @@ module ClusterManagement
 
       if applied
         package_applied = applied.call box
-        # ensure_boolean! package_applied, :applied?
       else
         package_applied = false
       end
       
-      if apply and !package_applied
-        ClusterManagement.logger.info %(applying '#{name}#{version ? ":#{version}" : ''}' to '#{box}'\n)
-        apply.call box
-      end
-      
-      if verify
-        verified = verify.call box
-        # ensure_boolean! verified, 'verify'
-        raise "invalid '#{name}' package for '#{box}'!" unless verified
-      end
-      after_applying && after_applying.call(box)
-      # print "done\n" if apply and !package_applied
-    end
-    
-    protected
-      def ensure_boolean! value, method
-        unless value.eql?(true) or value.eql?(false)
-          raise "invalid return value in '#{name}.#{method}' (only true/false allowed)!"
+      if apply
+        unless package_applied
+          ClusterManagement.logger.info %(applying '#{name}#{version ? ":#{version}" : ''}' to '#{box}'\n)
+          apply.call box
+        
+          if verify
+            verified = verify.call box
+            raise "invalid '#{name}' package for '#{box}'!" unless verified
+          end
+        
+          after_applying && after_applying.call(box)
+        end
+      else
+        if verify
+          verified = verify.call box
+          raise "invalid '#{name}' package for '#{box}'!" unless verified
         end
       end
+    end
   end  
 end
 
-def package name_or_options, version = nil, &block
+def packager name_or_options, version = nil, &block
   version ||= name_or_options.delete :version if name_or_options.is_a? Hash
   ClusterManagement.rake_task name_or_options do |task, *args|
     if block
