@@ -1,17 +1,17 @@
 require 'spec_helper'
 require 'cluster_management/package'
 
-describe 'Package' do
+describe 'BoxTask' do
   before :each do
-    ClusterManagement.box = :box
+    ClusterManagement.boxes = [:box]
   end
   
   it 'should allow empty declaration' do
-    packager :tools
+    box_task :tools
     ClusterManagement.last_task.should_not be_nil
     
     ClusterManagement.last_task = nil
-    packager(:tools){}
+    box_task(:tools){}
     ClusterManagement.last_task.should_not be_nil
   end
   
@@ -23,8 +23,8 @@ describe 'Package' do
     check.should_receive(:after_applying).ordered
     
     the_package, the_box = nil, nil
-    packager :tools, 1 do
-      package.is_a?(ClusterManagement::Package).should == true
+    box_task :tools, 1 do
+      package.is_a?(ClusterManagement::BoxTask).should == true
       version.should == 1
       box.should == :box
       
@@ -41,7 +41,7 @@ describe 'Package' do
     check.should_not_receive(:apply)
     check.should_not_receive(:verify)
     
-    packager :tools do
+    box_task :tools do
       applied?{true}
       apply{check.apply}
       verify{check.verify}
@@ -50,7 +50,7 @@ describe 'Package' do
   
   it "should always verify packages if there's :verify without :apply" do
     -> {
-      packager :tools do
+      box_task :tools do
         verify{false}
       end
     }.should raise_error(/invalid.*tools/)
@@ -61,18 +61,18 @@ describe 'Package' do
     ClusterManagement.stub(:boxes).and_return(boxes)
     
     check = []
-    packager :tools do
+    box_task :tools do
       apply{check << box}
     end
     check.should == boxes
   end
   
   it 'should support version attribute' do
-    packager :tools, 2 do
+    box_task :tools, 2 do
       version.should == 2
     end
     
-    packager tools: :os, version: 2 do
+    box_task tools: :os, version: 2 do
       version.should == 2
     end
   end
@@ -82,7 +82,7 @@ describe 'Package' do
       box = mock()    
       box.should_receive(:has_mark?).ordered.with(key).and_return(has_mark)
       box.should_receive(:mark).ordered.with(key) unless has_mark
-      ClusterManagement.box = box
+      ClusterManagement.boxes = [box]
       box
     end
     
@@ -92,7 +92,7 @@ describe 'Package' do
       check = mock()
       check.should_receive(:apply_once).with(box)
     
-      packager :tools do
+      box_task :tools do
         apply_once{check.apply_once(box)}
       end
     end
@@ -103,7 +103,7 @@ describe 'Package' do
       check = mock()
       check.should_not_receive(:apply_once)
     
-      packager :tools do
+      box_task :tools do
         apply_once{check.apply_once}
       end
     end
@@ -114,7 +114,7 @@ describe 'Package' do
       check = mock()
       check.should_receive(:apply_once)
     
-      packager :tools, 2 do
+      box_task :tools, 2 do
         apply_once{check.apply_once}
       end
     end

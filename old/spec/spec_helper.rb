@@ -9,11 +9,7 @@ require 'cluster_management/cluster_management'
 # 
 module ClusterManagement
   class << self
-    attr_accessor :box
-    
-    def boxes
-      [box]
-    end
+    attr_accessor :boxes
   end
 end
 
@@ -61,7 +57,7 @@ end
 module ClusterManagement
   class << self
     def logger
-      @logger ||= Logger.new nil
+      @logger ||= CustomLogger.new nil
     end
   end
 end

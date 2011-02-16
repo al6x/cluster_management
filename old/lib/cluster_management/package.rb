@@ -1,5 +1,5 @@
 module ClusterManagement
-  class Package < Hash
+  class BoxTask < Hash
     class Dsl
       attr_reader :package, :box
 
@@ -40,7 +40,7 @@ module ClusterManagement
       
       if apply
         unless package_applied
-          ClusterManagement.logger.info %(applying '#{name}#{version ? ":#{version}" : ''}' to '#{box}'\n)
+          ClusterManagement.logger.info %(applying '#{name}#{version ? ":#{version}" : ''}' to '#{box}')
           apply.call box
         
           if verify
@@ -60,12 +60,19 @@ module ClusterManagement
   end  
 end
 
-def packager name_or_options, version = nil, &block
-  version ||= name_or_options.delete :version if name_or_options.is_a? Hash
+def box_task name_or_options, version = nil, &block
+  # parsing arguments
+  options = {}
+  options[:version] = version if version
+  if name_or_options.is_a? Hash    
+    options[:version] = name_or_options.delete :version
+  end
+  
+  # applying tasks to boxes
   ClusterManagement.rake_task name_or_options do |task, *args|
-    if block
+    if block      
       ClusterManagement.boxes.each do |box|
-        package = ClusterManagement::Package.new task.name, version
+        package = ClusterManagement::BoxTask.new task.name, options[:version]
         package.configure box, &block
       end
     end

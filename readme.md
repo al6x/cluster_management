@@ -9,7 +9,7 @@ addon it should be easy to add and get started with it.
 It's ssh-agnostic and has no extra dependencies. You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
 samples below are done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
 
-## Package Management
+## BoxTask Management
 
 Define your packages, they are just rake tasks, so you probably know how to work with them:
 
@@ -86,7 +86,7 @@ Now, you can press the enter:
 
     $ rake os:rails host=myapp.com
     
-and packager will do all the job of installing and configuring your cluster boxes, and prints you something like that 
+and box_task will do all the job of installing and configuring your cluster boxes, and prints you something like that 
 (it's a sample output of some of my own box, you can see config details here [my_cluster][my_cluster]):
     
     $ rake app_server host=universal.xxx.com

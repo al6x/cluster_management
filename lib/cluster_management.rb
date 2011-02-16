@@ -1,7 +1,12 @@
-%w(
-  support
-  package
-  cluster_management  
-).each{|f| require "cluster_management/#{f}"}
+require 'ruby_ext'
+require 'vos'
+require 'yaml'
+require 'tilt'
 
-require 'cluster_management/integration/vos' unless $cluster_management_dont_include_integration
+%w(
+  config
+  logger
+  service
+  integration/vfs
+  integration/vos
+).each{|f| require "cluster_management/#{f}"}
