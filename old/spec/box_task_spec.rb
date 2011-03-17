@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'cluster_management/package'
 
 describe 'BoxTask' do
-  before :each do
+  before do
     ClusterManagement.boxes = [:box]
   end
   
