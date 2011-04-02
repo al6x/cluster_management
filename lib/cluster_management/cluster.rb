@@ -41,7 +41,7 @@ module ClusterManagement
     end
   
     def configure runtime_dir            
-      config.merge_config! "#{runtime_dir}/config/config.yml"
+      config.merge_file! "#{runtime_dir}/config/config.yml"
       config.config_path = "#{runtime_dir}/config"
       
       r = {}

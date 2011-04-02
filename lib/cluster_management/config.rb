@@ -1,6 +1,6 @@
 module ClusterManagement
   class Config < SafeHash
-    def merge_config! file_path      
+    def merge_file! file_path      
       raise("config file must have .yml extension (#{file_path})!") unless file_path.end_with? '.yml'
       data = ::YAML.load_file file_path      
       if data
@@ -11,7 +11,7 @@ module ClusterManagement
     
     # def self.load file  
     #   @config = Config.new
-    #   @config.merge_config! file
+    #   @config.merge_file! file
     # end
   end  
 end
