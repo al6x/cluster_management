@@ -42,7 +42,7 @@ module ClusterManagement
   
     def configure runtime_dir            
       config.merge_file! "#{runtime_dir}/config/config.yml"
-      config.config_path = "#{runtime_dir}/config"
+      config.set! :config_path, "#{runtime_dir}/config"
       
       r = {}
       config.boxes!.to_h.each do |box, tags|
@@ -50,7 +50,7 @@ module ClusterManagement
           (r[tag.to_sym] ||= []) << box
         end
       end      
-      config.tags = r
+      config.set! :tags, r
     end  
   end
 end
