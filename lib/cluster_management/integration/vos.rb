@@ -1,27 +1,25 @@
-module Vos
-  class Box
-    include Helpers::Ubuntu
+class Vos::Box
+  include Helpers::Ubuntu
+  
+  # alias_method :mark_without_service!, :mark!
+  # def mark! key
+  #   key = key.respond_to(:marker) || key
+  #   mark_without_service! key
+  # end
+  #   
+  # alias_method :has_mark_without_service?, :has_mark?
+  # def has_mark? key
+  #   key = key.respond_to(:marker) || key
+  #   has_mark_without_service? key
+  # end
     
-    # alias_method :mark_without_service!, :mark!
-    # def mark! key
-    #   key = key.respond_to(:marker) || key
-    #   mark_without_service! key
-    # end
-    #   
-    # alias_method :has_mark_without_service?, :has_mark?
-    # def has_mark? key
-    #   key = key.respond_to(:marker) || key
-    #   has_mark_without_service? key
-    # end
-      
-    def apply_once key, &block
-      unless has_mark? key
-        block.call self
-        mark! key
-      end
-    end      
-    
-  end
+  def apply_once key, &block
+    unless has_mark? key
+      block.call self
+      mark! key
+    end
+  end      
+  
 end
 
 # module Vos
