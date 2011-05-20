@@ -6,6 +6,8 @@ require 'class_loader'
 # require 'micon'
 # require 'micon/rad'
 
+module ClusterManagement
+end
 
 # 
 # Classes

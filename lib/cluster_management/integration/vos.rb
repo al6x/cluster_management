@@ -1,5 +1,5 @@
 class Vos::Box
-  include Helpers::Ubuntu
+  include Vos::Helpers::Ubuntu
   
   # alias_method :mark_without_service!, :mark!
   # def mark! key
