@@ -39,9 +39,9 @@ class ClusterManagement::Cluster
     end
   end
 
-  def configure runtime_dir            
-    config.merge_file! "#{runtime_dir}/config/config.yml"
-    config.set! :config_path, "#{runtime_dir}/config"
+  def configure runtime_path            
+    config.merge_file! "#{runtime_path}/config/config.yml"
+    config.set! :config_path, "#{runtime_path}/config"
     
     r = {}
     config.boxes!.to_h.each do |box, tags|
