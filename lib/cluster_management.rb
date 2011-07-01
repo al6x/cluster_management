@@ -27,7 +27,7 @@ end
 # Cluster
 # 
 CLUSTER = ClusterManagement::Cluster.new
-def cluster; ::CLUSTER end
+def cluster; CLUSTER end
 
 
 # 

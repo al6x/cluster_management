@@ -1,14 +1,7 @@
-class ClusterManagement::Cluster
-  attr_accessor :config, :logger  
-  attr_reader :boxes
-  
-  def services &b
-    b ? @services.instance_eval(&b) : @services
-  end
-  
+class ClusterManagement::Cluster      
   class Services < BasicObject
     def initialize
-      @h = ::Hash.new do |h, service_name|          
+      @h = ::Hash.new do |h, service_name|        
         h[service_name] = ::ClusterManagement::Service.service_class(service_name).new
       end
     end
@@ -23,32 +16,28 @@ class ClusterManagement::Cluster
         ::Object.send :p, msg
       end
       
-      def method_missing m, *a, &b          
-        super unless a.blank? and b.blank?
+      def method_missing m
         @h[m]
       end
   end
 
   def initialize 
     @services = Services.new
-    
+        
     @boxes = Hash.new do |h, host|
-      box = config.ssh? ? Box.new(host.to_s, config.ssh.to_h) : Box.new(host.to_s)  
+      box = config.ssh ? Box.new(host.to_s, config.ssh) : Box.new(host.to_s)  
       box.open
       h[host] = box
     end
   end
-
-  def configure runtime_path            
-    config.merge_file! "#{runtime_path}/config/config.yml"
-    config.set! :config_path, "#{runtime_path}/config"
-    
-    r = {}
-    config.boxes!.to_h.each do |box, tags|
-      tags.each do |tag|
-        (r[tag.to_sym] ||= []) << box
-      end
-    end      
-    config.set! :tags, r
-  end  
+  
+  attr_reader :boxes
+  
+  def services &b
+    b ? @services.instance_eval(&b) : @services
+  end
+  
+  attr_writer :config, :logger
+  def config; @config || raise("config not defined!") end
+  def logger; @logger || raise("logger not defined!") end
 end

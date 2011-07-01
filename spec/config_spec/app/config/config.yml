@@ -1,0 +1,7 @@
+handy_scheme:
+  'web1.app.com': ['app', 'ruby']
+  'web2.app.com': ['app', 'ruby']
+  'db.app.com': ['db']
+
+nginx:
+  port: 80

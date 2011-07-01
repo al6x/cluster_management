@@ -1,4 +1,4 @@
-warn 'stack trace filtering enabled'
+# warn 'stack trace filtering enabled'
 
 Exception.metaclass_eval do
   attr_accessor :filters
@@ -26,7 +26,7 @@ Exception.filters = [
   "/class_loader",
   "/micon"
 ]
-# Exception.filters = []
+Exception.filters = []
 
 Exception.class_eval do
   alias_method :set_backtrace_without_filter, :set_backtrace

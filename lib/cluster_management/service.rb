@@ -8,8 +8,9 @@ class ClusterManagement::Service
       end
     end
     
-    def tag tag = nil
+    def tag tag = nil      
       if tag
+        tag.must_be.a Symbol
         @tag = tag
       else
         @tag || raise("service :#{service_name} not tagged!")
@@ -26,7 +27,7 @@ class ClusterManagement::Service
     end
     cache_method_with_params :service_class
     
-    def service_name; name.split('::').last.underscore end
+    def service_name; name.split('::').last.underscore.to_sym end
     cache_method_with_params :service_name
   end
   
@@ -38,46 +39,18 @@ class ClusterManagement::Service
     def service_name; self.class.service_name end
   
     def apply_once key, &block
-      boxes{|box| box.apply_once self.class.marker(key), &block}
+      boxes.each{|box| box.apply_once self.class.marker(key), &block}
     end
     
-    def boxes &b
-      if b
-        boxes.each &b
-      else
-        unless @boxes
-          hosts = config.tags!["#{self.class.tag}", nil] || []
-          @boxes = hosts.collect{|host| cluster.boxes[host]}
-        end
-        @boxes
+    def boxes
+      @boxes ||= begin
+        hosts = config.scheme[self.class.tag] || []
+        @boxes = hosts.collect{|host| cluster.boxes[host]}
       end
     end
     
-    def single_box
+    def box
       boxes.size.must_be == 1
       boxes.first
     end
-    
-    # def require options
-    #   # if args.size == 1 and args.first.is_a?(Hash)
-    #   #   services = args.first
-    #   # elsif args.size == 2 and args.first.is_a?(Array)
-    #   #   services = {}
-    #   #   args.first.each{|klass| services[klass] = args.last}
-    #   # else
-    #   #   raise 'invalid arguments'
-    #   # end
-    #   
-    #   options.each do |service_name, method|
-    #     key = "#{service_name}.#{method}"
-    #     unless box.already_required_services.include? key
-    #       klass.new(box).send method if klass.method_defined? method
-    #       box.already_required_services << key
-    #     end
-    #   end
-    # end      
-    # 
-    # def already_required_services
-    #   
-    # end
 end
