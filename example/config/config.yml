@@ -1,0 +1,17 @@
+# 
+# Actual Deployment Scheme will be something like this, 
+# but because this is just an examle we will use 'localhost' only
+# 
+# handy_scheme:
+#   'web1.app.com': ['web']
+#   'web2.app.com': ['web']
+#   'db.app.com': ['db']
+# 
+handy_scheme:
+  localhost: ['web', 'db']
+  
+  
+# 
+# You can also define here any arbitrary variables
+# 
+app_path: /tmp/cm_example_app

@@ -1,141 +1,176 @@
-# Simple cluster management tools
+# Simple Cluster Management Tool
 
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
-**It's extremely easy**, there are only 3 methods. 
+**It's very easy**, there are only a 3 concept - Box, Cluster and Service.
 
-You probably already familiar with Rake and have it in Your project, and because ClusterManagement is just a small Rake 
-addon it should be easy to add and get started with it.
+Usage:
+ - package installation, dependencies, versioning
+ - process management, start/stop services
+ - deplyment
 
-It's ssh-agnostic and has no extra dependencies. You can use whatever ssh-tool you like (even pure Net::SSH / Net::SFTP), 
-samples below are done by using [Virtual Operating System][vos] and [Virtual File System][vfs] tools.
+It's designed to be used with [Virtual File System][vfs], [Virtual Operation System][vos] and Rake, but it's not a requirements, You can use other tools also.
 
-## BoxTask Management
+## Core Concepts
 
-Define your packages, they are just rake tasks, so you probably know how to work with them:
+- Box - a PC with remote access.
+- Service - some abstract thing (a package, running process, app, ...) that operates on 1..n boxes. It can perform install/update/start/stop/.. operations and request other services to perform things it needs.
+- Deployment Scheme - defines how services are distributed among boxes.
 
-    desc 'ruby 1.9.2'
-    package ruby: :system_tools do        
-      apply_once do
-        installation_dir = '/usr/local/ruby'
-        ruby_name = "ruby-1.9.2-p136"
+## Deployment Scheme
 
-        box.tmp do |tmp|
-          tmp.bash "wget ftp://ftp.ruby-lang.org//pub/ruby/1.9/#{ruby_name}.tar.gz"
-          tmp.bash "tar -xvzf #{ruby_name}.tar.gz"
+Let's suppose that we want to deploy our App on a cluster of 3 boxes using the following scheme. **Tags** are used to define connections between **Boxes** and **Services**
+![Deployment Scheme][deployment_scheme]
 
-          src_dir = tmp[ruby_name]
-          src_dir.bash "./configure --prefix=#{installation_dir}"
-          src_dir.bash 'make && make install'
-        end
+Deployment scheme defined via config and service tags, see below.
 
-        box.home('.gemrc').write! "gem: --no-ri --no-rdoc\n"
+## Boxes
 
-        bindir = "#{installation_dir}/bin"
-        unless box.env_file.content =~ /PATH.*#{bindir}/
-          box.env_file.append %(\nexport PATH="$PATH:#{bindir}"\n)
-          box.reload_env
-        end
-      end    
-      verify{box.bash('ruby -v') =~ /ruby 1.9.2/}
+Boxes are defined in config:
+
+```yaml
+handy_scheme:
+  'web1.app.com': ['web']
+  'web2.app.com': ['web']
+  'db.app.com': ['db']
+```
+
+## Services
+
+Dependencies are defined by calling another services, it's easy to use and understand and allows high flexibility in configuration.
+
+And, **it's 'smart'**, in sample below the App::deploy method is smart ennought to figure out that it needs the Ruby and MySQL Services and it will call for them to apply before itself.
+
+You can specify that the package should be applied only once (see :apply_once), and use versioning (see :version) - change the version and it will be reapplied.
+
+It supports iterative development and can figure out what Services needs to be applied, You don't have to write all the config at once, do it by small steps, adding one package after another. 
+
+Below are our Services:
+
+```ruby
+class Services::Ruby < Service
+  tag :web
+  version 4
+  
+  def install
+    # it will be called only once, it will be called next time only if You change the version
+    apply_once :install do |box|            
+      logger.info "installing :#{service_name}"
+      box.fake_bash "apt-get install ruby"
     end
-      
-Or you can use a little more explicit notation with custom :applied? logic (:apply_once is a shortcut for :applied? & :after_applying):
+  end
+end
 
-    package :ruby do
-      applied?{box.has_mark? :ruby}
-      apply do
-        ...
-      end
-      after_applying{box.mark :ruby}
+class Services::Thin < Service
+  tag :web
+  
+  def restart
+    logger.info "restarting :#{service_name}"
+    boxes.each{|box| box.fake_bash 'thin restart'}
+  end
+end
+
+class Services::MySql < Service
+  tag :db
+  def started
+    logger.info "ensuring mysql is running"
+    box.fake_bash 'mysql start' unless box.fake_bash('ps -A') =~ /mysql/
+  end
+end
+
+class Services::App < Service
+  tag :web
+
+  def install      
+    services.ruby.install        
+    apply_once :install do |box| 
+      logger.info "installing :#{service_name}"
+      box.fake_bash "cd #{config.app_path} && git clone app"
     end
-    
-Let's define another package:
-    
-    package rails: :ruby, version: 3 do
-      apply_once do
-        box.bash 'gem install rails'
-      end
-    end
-    
-It's understands dependencies, so the :rails package will apply :ruby before applying itself. 
+  end
 
-It checks if the package already has been applied to box, so you can evolve your configuration and apply it multiple times, 
-it will apply only missing packages (or drop the applied? clause and it will be applied every run). It allows you
-to use **iterative development**, you don't need to write all the config at once, do it by small steps, adding one package after another. 
+  def update
+    install        
+    logger.info "updating :#{service_name}"
+    boxes.each{|box| box.fake_bash "cd #{config.app_path} && git pull app"}
+  end
 
-You can also use versioning to update already installed packages - if You change version it will be reapplied next run.
-And by the way, the box.mark ... is just an example check, you can use anything there.
-    
-And, last step - define (I intentionally leave implementation of this method to You, it's very specific to Your environment) 
-to what machines it should be applied:
+  def deploy    
+    update
+    logger.info "deploying :#{service_name}"  
+    services.my_sql.started
+    services.thin.restart
+  end    
+end
+```
 
-    module ClusterManagement
-      def self.boxes
-        unless @boxes    
-          host = ENV['host'] || raise(":host not defined!")
-          box = Vos::Box.new host: host, ssh: config.ssh!.to_h
-          box.open
+## Rake
 
-          @boxes = [box]
-        end
-        @boxes
-      end
-    end
-    
-Now, you can press the enter:
+```ruby
+desc 'deploy to cluster'
+task :deploy do
+  cluster.services.app.deploy
+end
+```
 
-    $ rake os:rails host=myapp.com
-    
-and box_task will do all the job of installing and configuring your cluster boxes, and prints you something like that 
-(it's a sample output of some of my own box, you can see config details here [my_cluster][my_cluster]):
-    
-    $ rake app_server host=universal.xxx.com
-    applying 'basic:os:5' to '<Box: universal.xxx.com>'
-    applying 'basic:apt' to '<Box: universal.xxx.com>'
-    applying 'basic:system_tools' to '<Box: universal.xxx.com>'
-    applying 'basic:ruby' to '<Box: universal.xxx.com>'
-      building ... done
-      updating path ... done
-    applying 'basic:git' to '<Box: universal.xxx.com>'
-    applying 'basic:security:6' to '<Box: universal.xxx.com>'
-    applying 'basic:manual_management:2' to '<Box: universal.xxx.com>'
-    applying 'app_server:fake_gem:2' to '<Box: universal.xxx.com>'
-    applying 'app_server:custom_ruby:3' to '<Box: universal.xxx.com>'
-    
-You can also use standard Rake -T command to see docs (it's also from my config, details are here [my_cluster][my_cluster]):
+Now, type:
 
-    $ rake -T
-    rake app_server               # app server
-    rake app_server:custom_ruby   # custom ruby (with encoding globally set to unicode and enabled fake_gem hack)
-    rake app_server:fake_gem      # fake_gem
-    rake basic                    # Box with basic packages installed
-    rake basic:apt                # apt
-    rake basic:git                # git
-    rake basic:manual_management  # Makes box handy for manual management
-    rake basic:os                 # Checks OS version and add some very basic stuff
-    rake basic:ruby               # ruby
-    rake basic:security           # security
-    rake basic:system_tools       # System tools, mainly for build support
-    rake db                       # db
-    rake db:mongodb               # MongoDB
+Note: You don't have :install Services before :deploy, the **App::deploy will fully configure all boxes from clean state** - it will install packages, ensure all needed services are running and only then will start deployment.
 
-## Service Management
+```bash
+$ rake deploy
+```
 
-[add details here]
-    
-## Deployment
+You'll se something like this:
 
-[add more details here]
-    
-**You can use it also for deployment**, exactly the same way, configure it the way you like, it's just rake 
-tasks.
+```bash
+installing :ruby
+   => bash: 'apt-get install ruby'
+installing :app
+   => bash: 'cd /tmp/cm_example_app && git clone app'
+updating :app
+   => bash: 'cd /tmp/cm_example_app && git pull app'
+deploying :app
+ensuring mysql is running
+   => bash: 'ps -A'
+   => bash: 'mysql start'
+restarting :thin
+   => bash: 'thin restart'
+```
 
-# Temporarry stuff, don't bother to read it
+Deploy one more time, notice now there's no installation of Ruby and App:
 
-- small
-- uses well known tools (rake and anytingh ssh-enabled)
-- support iterative development
+```bash
+updating :app
+   => bash: 'cd /tmp/cm_example_app && git pull app'
+deploying :app
+ensuring mysql is running
+   => bash: 'ps -A'
+   => bash: 'mysql start'
+restarting :thin
+   => bash: 'thin restart'
+```
+
+## Installation
+
+```bash
+$ gem install cluster_management
+```
+
+## Examples
+
+Go to example folder, there are full example, snippets from it where used in code above.
+Type 'rake deploy' and look at the output.
+
+For simplicity it uses the 'localhost' instead of 3 remote boxes and 'fake_bash' that just prints command to console (because we don't want to actually alter our localhost).
+But You can easily define actual remote PC in config and replace 'fake_bash' with 'bash' to see it in real action.
+
+You can also see 'real' configuration I use to manage my [http://ruby-lang.info](http://ruby-lang.info) site, [my_cluster][my_cluster].
+
+## Bugs, Suggestion, Discussions
+
+Please feel free to submit bugs and proposals to the issue tab, or contact me by email.
 
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
 [vos]: http://github.com/alexeypetrushin/vos
 [vfs]: http://github.com/alexeypetrushin/vfs
+[deployment_scheme]: http://raw.github.com/alexeypetrushin/cluster_management/master/readme/deployment_scheme.png

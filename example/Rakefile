@@ -1,0 +1,17 @@
+root_path = File.dirname __FILE__
+$LOAD_PATH << "#{root_path}/lib"
+
+require 'cluster_management'
+require 'example/support'
+
+# loading config.yml
+cluster.config.load_config! root_path
+
+# enabling automatic class loading
+autoload_dir "#{root_path}/lib"
+
+
+desc 'deploy App to Cluster'
+task :deploy do
+  cluster.services.app.deploy
+end
