@@ -19,7 +19,8 @@ It's designed to be used with [Virtual File System][vfs], [Virtual Operation Sys
 
 ## Deployment Scheme
 
-Let's suppose that we want to deploy our App on a cluster of 3 boxes using the following scheme. **Tags** are used to define connections between **Boxes** and **Services**
+Let's suppose that we want to deploy our App on a cluster of 3 boxes using the following scheme. **Tags** are used to define connections (N to N, althouth in example below it's 1 to 1) between **Boxes** and **Services**.
+
 ![Deployment Scheme][deployment_scheme]
 
 Deployment scheme defined via config and service tags, see below.
