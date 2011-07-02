@@ -4,11 +4,12 @@ It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef,
 **It's very easy**, there are only a 3 concept - Box, Cluster and Service.
 
 Usage:
+
  - package installation, dependencies, versioning
  - process management, start/stop services
  - deplyment
 
-It's designed to be used with [Virtual File System][vfs], [Virtual Operation System][vos] and Rake, but it's not a requirements, You can use other tools also.
+It's designed to be used with [Virtual File System][vfs], [Virtual Operation System][vos] and Rake, but it's not required, You can use other tools also.
 
 ## Core Concepts
 
@@ -173,4 +174,4 @@ Please feel free to submit bugs and proposals to the issue tab, or contact me by
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
 [vos]: http://github.com/alexeypetrushin/vos
 [vfs]: http://github.com/alexeypetrushin/vfs
-[deployment_scheme]: http://raw.github.com/alexeypetrushin/cluster_management/master/readme/deployment_scheme.png
+[deployment_scheme]: https://github.com/alexeypetrushin/cluster_management/raw/master/readme/deployment_scheme.png
