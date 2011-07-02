@@ -160,7 +160,7 @@ $ gem install cluster_management
 
 ## Examples
 
-Go to [example][:example] folder, there are full example, type 'rake deploy' and look at the output.
+Clone [cluster_management][cluster_management] and go to [example][example] folder, there are full example, type 'rake deploy' and look at the output.
 
 For simplicity it uses the 'localhost' instead of 3 remote boxes and 'fake_bash' that just prints command to console (because we don't want to actually alter our localhost).
 But You can easily define actual remote PCs in config and replace 'fake_bash' with 'bash' and see it in the real action.
@@ -176,3 +176,4 @@ Please feel free to submit bugs and proposals to the issue tab above, or contact
 [vfs]: http://github.com/alexeypetrushin/vfs
 [deployment_scheme]: https://github.com/alexeypetrushin/cluster_management/raw/master/readme/deployment_scheme.png
 [example]: https://github.com/alexeypetrushin/cluster_management/tree/master/example
+[cluster_management]: https://github.com/alexeypetrushin/cluster_management
