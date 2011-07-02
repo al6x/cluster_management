@@ -19,11 +19,11 @@ It's designed to be used with [Virtual File System][vfs], [Virtual Operation Sys
 
 ## Deployment Scheme
 
-Let's suppose that we want to deploy our App on a cluster of 3 boxes using the following scheme. **Tags** are used to define connections (N to N, althouth in example below it's 1 to 1) between **Boxes** and **Services**.
+Let's suppose that we want to deploy our App on a cluster of 3 boxes using the following scheme. **Tags** are used to define connections (N to M, althouth in example below it's 1 to 1) between **Boxes** and **Services**.
 
 ![Deployment Scheme][deployment_scheme]
 
-Deployment scheme defined via config and service tags, see below.
+Deployment scheme defined via box tags (in config) and service tags, see below.
 
 ## Boxes
 
@@ -44,7 +44,7 @@ And, **it's 'smart'**, in sample below the App::deploy method is smart ennought 
 
 You can specify that the package should be applied only once (see :apply_once), and use versioning (see :version) - change the version and it will be reapplied.
 
-It supports iterative development and can figure out what Services needs to be applied, You don't have to write all the config at once, do it by small steps, adding one package after another. 
+It supports iterative development and can figure out what services are missing and needs to be applied, You don't have to write all the config at once, do it by small steps, adding one package after another. 
 
 Below are our Services:
 
@@ -114,9 +114,9 @@ task :deploy do
 end
 ```
 
-Now, type:
+Note: You don't have install services before deployment, the **App::deploy will resolve all dependencies automatically and fully configure all boxes from clean state** - it will install packages, ensure all needed services are running and only then will start deployment.
 
-Note: You don't have :install Services before :deploy, the **App::deploy will fully configure all boxes from clean state** - it will install packages, ensure all needed services are running and only then will start deployment.
+Now, type:
 
 ```bash
 $ rake deploy
@@ -124,7 +124,7 @@ $ rake deploy
 
 You'll se something like this:
 
-```bash
+```
 installing :ruby
    => bash: 'apt-get install ruby'
 installing :app
@@ -141,7 +141,7 @@ restarting :thin
 
 Deploy one more time, notice now there's no installation of Ruby and App:
 
-```bash
+```
 updating :app
    => bash: 'cd /tmp/cm_example_app && git pull app'
 deploying :app
@@ -160,19 +160,19 @@ $ gem install cluster_management
 
 ## Examples
 
-Go to example folder, there are full example, snippets from it where used in code above.
-Type 'rake deploy' and look at the output.
+Go to [example][:example] folder, there are full example, type 'rake deploy' and look at the output.
 
 For simplicity it uses the 'localhost' instead of 3 remote boxes and 'fake_bash' that just prints command to console (because we don't want to actually alter our localhost).
-But You can easily define actual remote PC in config and replace 'fake_bash' with 'bash' to see it in real action.
+But You can easily define actual remote PCs in config and replace 'fake_bash' with 'bash' and see it in the real action.
 
-You can also see 'real' configuration I use to manage my [http://ruby-lang.info](http://ruby-lang.info) site, [my_cluster][my_cluster].
+You can also see 'real' configuration I use to manage the [http://ruby-lang.info](http://ruby-lang.info) site, [my_cluster][my_cluster].
 
 ## Bugs, Suggestion, Discussions
 
-Please feel free to submit bugs and proposals to the issue tab, or contact me by email.
+Please feel free to submit bugs and proposals to the issue tab above, or contact me directly.
 
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
 [vos]: http://github.com/alexeypetrushin/vos
 [vfs]: http://github.com/alexeypetrushin/vfs
 [deployment_scheme]: https://github.com/alexeypetrushin/cluster_management/raw/master/readme/deployment_scheme.png
+[example]: https://github.com/alexeypetrushin/cluster_management/tree/master/example
