@@ -2,7 +2,7 @@ require 'rake_ext'
 
 project(
   name: "cluster_management",
-  version: "0.7.1",
+  gem: true,
   summary: "Simple Cluster Management Tools",
 
   author: "Alexey Petrushin",
