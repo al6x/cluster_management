@@ -23,12 +23,12 @@ class ClusterManagement::Config < Hash
     end
   end
   
-  def self.require_attr *attrs
+  def self.attr_required *attrs
     attrs.each do |m|
       define_method(m){self[m] || raise("key :#{m} not defined!")}
     end
   end
-  require_attr :scheme, :config_path, :runtime_path
+  attr_required :scheme, :config_path, :runtime_path
   
   protected
     def method_missing m, *args
