@@ -1,6 +1,6 @@
 # Simple Cluster Management Tool
 
-It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
+It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for Your needs.
 **It's very easy**, there are only a 3 concept - Box, Cluster and Service.
 
 Usage:
