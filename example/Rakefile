@@ -8,7 +8,7 @@ require 'example/support'
 cluster.config.load_config! root_path
 
 # enabling automatic class loading
-autoload_dir "#{root_path}/lib"
+autoload_path "#{root_path}/lib"
 
 
 desc 'deploy App to Cluster'
