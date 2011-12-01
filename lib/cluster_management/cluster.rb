@@ -7,7 +7,7 @@ class ClusterManagement::Cluster
     end
     
     def [] service_name
-      service_name.must_be.a ::Symbol
+      service_name.must.be_a ::Symbol
       @h[service_name.to_sym]
     end        
     

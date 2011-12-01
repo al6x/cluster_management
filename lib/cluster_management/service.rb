@@ -10,7 +10,7 @@ class ClusterManagement::Service
     
     def tag tag = nil      
       if tag
-        tag.must_be.a Symbol
+        tag.must.be_a Symbol
         @tag = tag
       else
         @tag || raise("service :#{service_name} not tagged!")
@@ -50,7 +50,7 @@ class ClusterManagement::Service
     end
     
     def box
-      boxes.size.must_be == 1
+      boxes.size.must.be == 1
       boxes.first
     end
 end
