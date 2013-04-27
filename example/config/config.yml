@@ -7,11 +7,16 @@
 #   'web2.app.com': ['web']
 #   'db.app.com': ['db']
 # 
+# Vagrant is configured to use 10.11.12.13 as IP.
 handy_scheme:
-  localhost: ['web', 'db']
-  
-  
+  '10.11.12.13': ['basic', 'web', 'db']
+
+
+ssh:
+  :user: 'root'
+  :password: 'vagrant'
+
 # 
 # You can also define here any arbitrary variables
 # 
-app_path: /tmp/cm_example_app
+# app_path: /tmp/cm_example_app

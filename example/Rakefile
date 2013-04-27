@@ -1,6 +1,8 @@
 root_path = File.dirname __FILE__
 $LOAD_PATH << "#{root_path}/lib"
 
+require 'rubygems'
+require 'class_loader'
 require 'cluster_management'
 require 'example/support'
 
@@ -8,7 +10,7 @@ require 'example/support'
 cluster.config.load_config! root_path
 
 # enabling automatic class loading
-autoload_path "#{root_path}/lib"
+ClassLoader.watch "#{root_path}/lib"
 
 
 desc 'deploy App to Cluster'
