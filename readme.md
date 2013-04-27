@@ -178,9 +178,6 @@ deploying :app
 ```
 And voilà! It's done!
 
-For simplicity it uses the 'localhost' instead of 3 remote boxes and 'fake_bash' that just prints command to console (because we don't want to actually alter our localhost).
-But You can easily define actual remote PCs in config and replace 'fake_bash' with 'bash' and see it in the real action.
-
 You can also see 'real' configuration I use to manage the [http://ruby-lang.info](http://ruby-lang.info) site, [my_cluster][my_cluster].
 
 ## Bugs, Suggestion, Discussions
