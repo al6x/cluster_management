@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+gem 'class_loader'
+gem 'cluster_management'
+gem 'vfs'
+gem 'vos'
+
+# to test in a local VM
+gem 'vagrant'
