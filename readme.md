@@ -164,7 +164,8 @@ Clone [cluster_management][cluster_management] and go to [example][example] fold
 You can do the following:
 ```bash
 $ bundle install
-$ vagrant up # and wait for the image to be downloaded
+$ vagrant init # and wait for the image to be downloaded
+$ vagrant up # this will power on the VM
 $ rake deploy
 installing :ruby to 10.11.12.13
   deleting old version
