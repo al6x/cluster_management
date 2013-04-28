@@ -184,6 +184,11 @@ You can also see 'real' configuration I use to manage the [http://ruby-lang.info
 
 Please feel free to submit bugs and proposals to the issue tab above, or contact me directly.
 
+## Contributors
+
+- [Alexey Petrushin](https://github.com/alexeypetrushin)
+- [Fernando Mumbach](https://github.com/fermuch)
+
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster/tree/master/lib/packages
 [vos]: http://github.com/alexeypetrushin/vos
 [vfs]: http://github.com/alexeypetrushin/vfs
