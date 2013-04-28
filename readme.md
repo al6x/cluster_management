@@ -9,7 +9,7 @@ Usage:
  - process management, start/stop services
  - deplyment
 
-It's designed to be used with [Virtual File System][vfs], [Virtual Operation System][vos] and Rake, but it's not required, You can use other tools also.
+It's designed to be used with [Virtual File System][vfs], [Virtual Operation System][vos] and Rake, but it's not required, You can use other tools also. For testing purposes it uses [Vagrant][vagrant] to test in a local Virtual Machine. If you're going to use Vagrant, you need to install [VirtualBox][vbox]
 
 ## Core Concepts
 
@@ -160,10 +160,23 @@ $ gem install cluster_management
 
 ## Examples
 
-Clone [cluster_management][cluster_management] and go to [example][example] folder, there are full example, type 'rake deploy' and look at the output.
-
-For simplicity it uses the 'localhost' instead of 3 remote boxes and 'fake_bash' that just prints command to console (because we don't want to actually alter our localhost).
-But You can easily define actual remote PCs in config and replace 'fake_bash' with 'bash' and see it in the real action.
+Clone [cluster_management][cluster_management] and go to [example][example] folder, there are full example.
+You can do the following:
+```bash
+$ bundle install
+$ vagrant init # and wait for the image to be downloaded
+$ vagrant up # this will power on the VM
+$ rake deploy
+installing :ruby to 10.11.12.13
+  deleting old version
+  building
+  configuring
+  updating environment
+installing :app
+updating :app
+deploying :app
+```
+And voilà! It's done!
 
 You can also see 'real' configuration I use to manage the [http://ruby-lang.info](http://ruby-lang.info) site, [my_cluster][my_cluster].
 
@@ -177,3 +190,5 @@ Please feel free to submit bugs and proposals to the issue tab above, or contact
 [deployment_scheme]: https://github.com/alexeypetrushin/cluster_management/raw/master/readme/deployment_scheme.png
 [example]: https://github.com/alexeypetrushin/cluster_management/tree/master/example
 [cluster_management]: https://github.com/alexeypetrushin/cluster_management
+[vagrant]: http://www.vagrantup.com/
+[vbox]: https://www.virtualbox.org/

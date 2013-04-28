@@ -7,7 +7,7 @@ class ClusterManagement::Config < Hash
 
     data = ::YAML.load_file path
     if data
-      data.must.be_a ::Hash
+      raise 'not a Hash' if data.class != ::Hash
       data.each{|k, v| self[k.to_sym] = v}
     end
 

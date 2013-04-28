@@ -7,7 +7,7 @@ class ClusterManagement::Cluster
     end
     
     def [] service_name
-      service_name.must.be_a ::Symbol
+      raise 'service_name not a Symbol' if service.class != Symbol
       @h[service_name.to_sym]
     end        
     
