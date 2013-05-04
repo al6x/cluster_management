@@ -3,6 +3,7 @@ $LOAD_PATH << "#{root_path}/lib"
 
 require 'rubygems'
 require 'class_loader'
+#require 'cluster_management'
 require 'cluster_management'
 require 'example/support'
 
