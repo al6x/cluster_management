@@ -25,7 +25,14 @@ class ClusterManagement::Cluster
     @services = Services.new
         
     @boxes = Hash.new do |h, host|
-      box = config.ssh ? Box.new(host.to_s, config.ssh) : Box.new(host.to_s)  
+      if config.ssh.include? host
+        # check for custom ssh config
+        box = Box.new(host.to_s, config.ssh[host])
+      else
+        # use global ssh config
+        # OR use only the host
+        box = config.ssh ? Box.new(host.to_s, config.ssh) : Box.new(host.to_s)
+      end
       box.open
       h[host] = box
     end
